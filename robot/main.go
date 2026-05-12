@@ -34,19 +34,17 @@ func New() *Robo {
 }
 
 func (r *Robo) Move(steps int) {
-	angle := r.angle
+	angle := ((r.angle % 360) + 360) % 360
 
-	switch {
-	case angle == 0:
+	switch angle {
+	case 0:
 		r.position.x += steps
-	case angle%90 == 0:
-		if angle > 0 {
-			r.position.y += steps
-		} else {
-			r.position.y -= steps
-		}
-	case angle%180 == 0:
+	case 90:
+		r.position.y += steps
+	case 180:
 		r.position.x -= steps
+	case 270:
+		r.position.y -= steps
 	}
 
 	fmt.Printf("POS %v %v\n", r.position.x, r.position.y)
