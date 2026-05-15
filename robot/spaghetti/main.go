@@ -84,18 +84,30 @@ func (r *Robo) Stop() {
 
 func (r *Robo) Do(cmd string) {
 	actions := strings.Split(cmd, " ")
-	if len(actions) != 2 {
+	if len(actions) == 0 {
 		return
 	}
 
 	switch command(actions[0]) {
 	case move:
+		if len(actions) != 2 {
+			return
+		}
+
 		value, _ := strconv.Atoi(actions[1])
 		r.Move(value)
 	case turn:
+		if len(actions) != 2 {
+			return
+		}
+
 		value, _ := strconv.Atoi(actions[1])
 		r.Turn(value)
 	case set:
+		if len(actions) != 2 {
+			return
+		}
+
 		r.Set(state(actions[1]))
 	case start:
 		r.Start()
