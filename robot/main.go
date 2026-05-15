@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
 
 type Robot interface {
 	Move(int)
@@ -14,6 +18,16 @@ type position struct {
 	x int
 	y int
 }
+
+type command string
+
+const (
+	move  command = "move"
+	turn  command = "turn"
+	set   command = "set"
+	start command = "start"
+	stop  command = "stop"
+)
 
 type state string
 
@@ -68,11 +82,31 @@ func (r *Robo) Stop() {
 	fmt.Printf("STOP\n")
 }
 
+func (r *Robo) Do(cmd string) {
+	actions := strings.Split(cmd, " ")
+	if len(actions) != 2 {
+		return
+	}
+
+	switch command(actions[0]) {
+	case move:
+		value, _ := strconv.Atoi(actions[1])
+		r.Move(value)
+	case turn:
+		value, _ := strconv.Atoi(actions[1])
+		r.Turn(value)
+	case set:
+		r.Set(state(actions[1]))
+	case start:
+		r.Start()
+	case stop:
+		r.Stop()
+	}
+}
+
 func main() {
 	r := New()
-	r.Turn(-90)
-	r.Set(soap)
-	r.Start()
-	r.Move(50)
-	r.Stop()
+	for _, c := range []string{"move 100", "turn -90", "set soap", "start", "move 50", "stop"} {
+		r.Do(c)
+	}
 }
