@@ -35,80 +35,76 @@ const (
 	brush state = "brush"
 )
 
-type Robo struct {
-	position position
-	angle    int
-	state    state
-}
+var (
+	angle         = 0
+	robotPosition = position{0, 0}
+	robotState    = water
+)
 
-func New() *Robo {
-	return &Robo{}
-}
-
-func (r *Robo) Move(steps int) {
-	angle := ((r.angle % 360) + 360) % 360
+func Move(steps int) {
+	angle := ((angle % 360) + 360) % 360
 
 	switch angle {
 	case 0:
-		r.position.x += steps
+		robotPosition.x += steps
 	case 90:
-		r.position.y += steps
+		robotPosition.y += steps
 	case 180:
-		r.position.x -= steps
+		robotPosition.x -= steps
 	case 270:
-		r.position.y -= steps
+		robotPosition.y -= steps
 	}
 
-	fmt.Printf("POS %v %v\n", r.position.x, r.position.y)
+	fmt.Printf("POS %v %v\n", robotPosition.x, robotPosition.y)
 }
 
-func (r *Robo) Turn(angle int) {
-	r.angle += angle
-	fmt.Printf("ANGLE %v\n", r.angle)
+func Turn(angle int) {
+	angle += angle
+	fmt.Printf("ANGLE %v\n", angle)
 }
 
-func (r *Robo) Set(s state) {
-	r.state = s
+func Set(s state) {
+	robotState = s
 	fmt.Printf("STATE %v\n", s)
 }
 
-func (r *Robo) Start() {
-	fmt.Printf("START WITH %v\n", r.state)
+func Start() {
+	fmt.Printf("START WITH %v\n", robotState)
 }
 
-func (r *Robo) Stop() {
+func Stop() {
 	fmt.Printf("STOP\n")
 }
 
-func (r *Robo) Do(commands ...string) {
+func Do(commands ...string) {
 	for _, cmd := range commands {
 		splitted := strings.Split(cmd, " ")
-		r.parseModeCommand(splitted)()
+		parseModeCommand(splitted)()
 
-		action, arg := r.parseActionCommand(splitted)
+		action, arg := parseActionCommand(splitted)
 		action(arg)
 
-		command, state := r.parseStateCommand(splitted)
+		command, state := parseStateCommand(splitted)
 		command(state)
 	}
 }
 
-func (r *Robo) parseModeCommand(args []string) ModeCommand {
+func parseModeCommand(args []string) ModeCommand {
 	if len(args) != 1 {
 		return func() {}
 	}
 
 	switch command(args[0]) {
 	case start:
-		return r.Start
+		return Start
 	case stop:
-		return r.Stop
+		return Stop
 	default:
 		return func() {}
 	}
 }
 
-func (r *Robo) parseActionCommand(args []string) (ActionCommand, int) {
+func parseActionCommand(args []string) (ActionCommand, int) {
 	if len(args) != 2 {
 		return func(int) {}, 0
 	}
@@ -117,22 +113,22 @@ func (r *Robo) parseActionCommand(args []string) (ActionCommand, int) {
 
 	switch command(args[0]) {
 	case move:
-		return r.Move, value
+		return Move, value
 	case turn:
-		return r.Turn, value
+		return Turn, value
 	default:
 		return func(i int) {}, 0
 	}
 }
 
-func (r *Robo) parseStateCommand(args []string) (StateCommand, state) {
+func parseStateCommand(args []string) (StateCommand, state) {
 	if len(args) != 2 {
 		return func(state) {}, ""
 	}
 
 	switch command(args[0]) {
 	case set:
-		return r.Set, state(args[1])
+		return Set, state(args[1])
 	default:
 		return func(s state) {}, ""
 	}
@@ -141,6 +137,5 @@ func (r *Robo) parseStateCommand(args []string) (StateCommand, state) {
 func main() {
 	commands := []string{"move 100", "turn -90", "set soap", "start", "move 50", "stop"}
 
-	r := New()
-	r.Do(commands...)
+	Do(commands...)
 }
