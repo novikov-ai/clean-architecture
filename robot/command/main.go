@@ -1,21 +1,21 @@
 package main
 
 import (
-	"clean-architecture/robot/command/controller"
-	"clean-architecture/robot/command/internal/domain"
-	"clean-architecture/robot/command/internal/robot"
+	"clean-architecture/command/internal/controller"
+	"clean-architecture/command/internal/domain"
+	"clean-architecture/command/internal/robo"
 )
 
 func main() {
 	cmds := []domain.Commander{
-		MoveCommand{}, // 100
-		TurnCommand{}, // -90
-		SetCommand{}, // soap
-		StartCommand{},
-		MoveCommand{}, // 50
-		StopCommand{},
+		robo.NewMoveCommand(100),
+		robo.NewTurnCommand(-90), 
+		robo.NewSetCommand(domain.Soap),
+		robo.NewStartCommand(),
+		robo.NewMoveCommand(50),
+		robo.NewStopCommand(),
 	}
 	
-	controller := conroller.New(cmds)
-	controller.Run()
+	controller := controller.New(cmds)
+	controller.Run(domain.Robot{})
 }
