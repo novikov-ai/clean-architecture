@@ -24,7 +24,7 @@ func main() {
 
 	r, caps = purerobot.New(1, 1)
 	r, caps = caps.Start()
-	r, caps = caps.Move(150) // clamped at the wall
+	r, caps = caps.Move(150)
 	if caps.Move == nil {
 		fmt.Println("hits barrier: Move capability is gone, further attempts are impossible")
 	}
@@ -37,7 +37,7 @@ func main() {
 
 	r, caps = purerobot.New(1, 0)
 	r, caps = caps.Start()
-	r, caps = caps.SetWater() // consumes the only unit of water
+	r, caps = caps.SetWater()
 	if caps.SetWater == nil {
 		fmt.Println("out of water: SetWater capability is gone, no more wasted attempts")
 	}
